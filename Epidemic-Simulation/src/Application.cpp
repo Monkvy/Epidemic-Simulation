@@ -14,8 +14,6 @@ Application::Application()
 	Random::Init();
 	ImGui::GetStyle().ItemSpacing = { 0, 10 };
 	ImGui::GetStyle().WindowPadding = { 10, 10 };
-	ImGui::GetStyle().FramePadding = { 5, 5 };
-	ImGui::GetStyle().ScrollbarSize = 10;
 
 	m_Epidemic.Generate();
 }
@@ -117,8 +115,8 @@ void Application::Render()
 	// Plot
 	if (m_ShowPlot && m_Epidemic.stats["infections"].size() == m_Epidemic.days)
 	{
-		ImPlot::BeginPlot("Graph");
-		
+		ImPlot::BeginPlot("Graph", "Day", "Peoples", {800, 800}, ImPlotFlags_Equal, ImPlotFlags_NoBoxSelect);
+
 		for (auto& [key, vec] : m_Epidemic.stats)
 		{
 			int* data = &vec[0];

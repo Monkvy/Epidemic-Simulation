@@ -9,6 +9,7 @@ BaseWindow::BaseWindow(const std::string& title, uint16_t width, uint16_t height
 {
 	p_Window.setFramerateLimit(maxFps);
 
+	// Initialize everything
 	ImGui::SFML::Init(p_Window);
 	ImPlot::CreateContext();
 	ImGui::GetIO().IniFilename = nullptr;
