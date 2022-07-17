@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <vector>
+#include <map>
 #include <SFML/Graphics.hpp>
 
 #include "Cell.h"
@@ -40,7 +41,12 @@ public:
 	float medEffectiveness, qEffectiveness;
 
 	bool running = false;
+	bool clear = true;
 	int t = 0;
+
+	std::map<std::string, std::vector<int>> stats;
+	int* timeline;
+
 	int infections = 0;
 	int deaths = 0;
 	int recovered = 0; 

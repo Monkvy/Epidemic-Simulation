@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <map>
 
 
 struct Cell
@@ -8,12 +10,12 @@ struct Cell
 	~Cell();
 
 	void Reset();
-	void Infect(uint16_t incubation, uint16_t duration, int& total_infections);
-	void Recover(float immunity, int& total_recovered);
-	void Die(int& total_deaths);
-	bool Medicate(float medEffectiveness, int& total_medicated);
-	bool Quarantine(float qEffectiveness, int& total_quarantined);
-	void Update(float fatality, float immunity, int& total_deaths, int& total_recovered);
+	void Infect(uint16_t incubation, uint16_t duration, std::map<std::string, std::vector<int>>& stats, int t);
+	void Recover(float immunity, std::map<std::string, std::vector<int>>& stats, int t);
+	void Die(std::map<std::string, std::vector<int>>& stats, int t);
+	bool Medicate(float medEffectiveness, std::map<std::string, std::vector<int>>& stats, int t);
+	bool Quarantine(float qEffectiveness, std::map<std::string, std::vector<int>>& stats, int t);
+	void Update(float fatality, float immunity, std::map<std::string, std::vector<int>>& stats, int t);
 
 	sf::Vector2u position;
 

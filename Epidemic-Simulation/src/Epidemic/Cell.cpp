@@ -27,18 +27,18 @@ void Cell::Reset()
 }
 
 
-void Cell::Infect(uint16_t incubation, uint16_t duration, int& total_infections)
+void Cell::Infect(uint16_t incubation, uint16_t duration, std::map<std::string, std::vector<int>>& stats, int t)
 {
-	total_infections++;
+	stats.find("infections")->second[t]++;
 	infected = true;
 	this->incubation = incubation;
 	this->duration = duration;
 }
 
 
-void Cell::Recover(float immunity, int& total_recovered)
+void Cell::Recover(float immunity, std::map<std::string, std::vector<int>>& stats, int t)
 {	
-	total_recovered++;
+	stats.find("recovered")->second[t]++;
 	infected = false;
 	incubation = 0;
 	duration = 0;
@@ -46,32 +46,32 @@ void Cell::Recover(float immunity, int& total_recovered)
 }
 
 
-void Cell::Die(int& total_deaths)
+void Cell::Die(std::map<std::string, std::vector<int>>& stats, int t)
 {
-	total_deaths++;
+	stats.find("deaths")->second[t]++;
 	dead = true;
 	infected = false;
 	duration = 0;
 }
 
 
-bool Cell::Medicate(float medEffectiveness, int& total_medicated)
+bool Cell::Medicate(float medEffectiveness, std::map<std::string, std::vector<int>>& stats, int t)
 {
-	total_medicated++;
+	stats.find("medicated")->second[t]++;
 	medicated = true;
 	return Random::Rand() < medEffectiveness;
 }
 
 
-bool Cell::Quarantine(float qEffectiveness, int& total_quarantined)
+bool Cell::Quarantine(float qEffectiveness, std::map<std::string, std::vector<int>>& stats, int t)
 {
-	total_quarantined++;
+	stats.find("quarantined")->second[t]++;
 	quarantined = true;
 	return Random::Rand() < qEffectiveness;
 }
 
 
-void Cell::Update(float fatality, float immunity, int& total_deaths, int& total_recovered)
+void Cell::Update(float fatality, float immunity, std::map<std::string, std::vector<int>>& stats, int t)
 {
 	if (!infected || empty)
 		return;
@@ -83,7 +83,7 @@ void Cell::Update(float fatality, float immunity, int& total_deaths, int& total_
 			duration--;
 		else
 			if (Random::Rand() > fatality)
-				Recover(immunity, total_recovered);
+				Recover(immunity, stats, t);
 			else
-				Die(total_deaths);
+				Die(stats, t);
 }

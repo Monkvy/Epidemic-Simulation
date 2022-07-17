@@ -23,7 +23,7 @@ Application::Application()
 
 void Application::HandleEvents(sf::Event event)
 {
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && !m_GuiHovered && !m_Epidemic.running)
+	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && !m_GuiHovered)
 	{
 		sf::Vector2i mousePos = sf::Mouse::getPosition(p_Window);
 		size_t size = m_Epidemic.getCurrentSize();
@@ -44,12 +44,15 @@ void Application::Render()
 	ImGui::SetWindowSize({ m_ConfigRect.width, m_ConfigRect.height });
 	ImGui::SetWindowPos({ m_ConfigRect.left, m_ConfigRect.top });
 
+
 	// Set m_GuiHovered
 	sf::Vector2i mousePos = sf::Mouse::getPosition(p_Window);
 	m_GuiHovered = m_ConfigRect.intersects({ (float)mousePos.x, (float)mousePos.y, 1, 1 });
 	if (ImGui::IsWindowCollapsed())
 		m_GuiHovered = false;
 
+
+	// Buttons
 	if (ImGui::Button("Generate", { m_ConfigRect.width - 20, 30 }))
 	{
 		m_Epidemic.Generate();
@@ -68,25 +71,32 @@ void Application::Render()
 		m_Epidemic.running = true;
 	}
 
+
+	// Set m_ShowPlot
 	const char* showPlotTxt = m_ShowPlot ? "Hide Plot" : "Show Plot";
 	if (ImGui::Button(showPlotTxt, { m_ConfigRect.width - 20, 30 }))
 		m_ShowPlot = !m_ShowPlot;
 
+
+	// Day & population
 	std::string day_txt = "Day:" + std::to_string(m_Epidemic.t);
-	std::string population_txt = "Population:" + std::to_string(pow(m_Epidemic.getCurrentSize(), 2));
-	std::string infected_txt = "Infected:" + std::to_string(m_Epidemic.infections);
-	std::string dead_txt = "Deaths:" + std::to_string(m_Epidemic.deaths);
-	std::string recovered_txt = "Recovered:" + std::to_string(m_Epidemic.recovered);
-	std::string quarantined_txt = "Quarantined:" + std::to_string(m_Epidemic.quarantined);
-	std::string medicated_txt = "Medicated:" + std::to_string(m_Epidemic.medicated);
+	std::string population_txt = "Population:" + std::to_string((int)pow(m_Epidemic.getCurrentSize(), 2));
 
 	ImGui::Text(day_txt.c_str());
 	ImGui::Text(population_txt.c_str());
-	ImGui::Text(infected_txt.c_str());
-	ImGui::Text(dead_txt.c_str());
-	ImGui::Text(recovered_txt.c_str());
-	ImGui::Text(quarantined_txt.c_str());
-	ImGui::Text(medicated_txt.c_str());
+
+
+	// Stats
+	for (auto& [key, vec] : m_Epidemic.stats)
+	{
+		int totalCount = 0;
+		for (int count : vec)
+			totalCount += count;
+
+		std::string txt = key + ":" + std::to_string(totalCount);
+		ImGui::Text(txt.c_str());
+	}
+
 
 	// Inputs
 	ImGui::SliderFloat("Density", &m_Epidemic.density, 0.f, 1.f);
@@ -103,21 +113,45 @@ void Application::Render()
 
 	ImGui::End();
 
-	if (m_ShowPlot)
+
+
+
+	/*
+	ImPlot::BeginPlot("hi");
+
+	int x[10] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+	};
+
+	int y[10] = {
+		0, 2, 1, 3, 4, 2, 4, 3, 3, 1
+	};
+
+	ImPlot::PlotLine("test", x, y, 10);
+
+	ImPlot::EndPlot();
+	*/
+
+
+
+
+	// Plot
+	if (m_ShowPlot && m_Epidemic.stats["infections"].size() == m_Epidemic.days)
 	{
 		ImPlot::BeginPlot("hi");
-
-		std::vector<int> infections;
-		std::vector<int> deaths;
-		std::vector<int> recovered;
 		
-		for (int i = 0; i < m_Epidemic.t; i++)
+		for (auto& [key, vec] : m_Epidemic.stats)
 		{
-			continue;
+			int* data = &vec[0];
+
+			std::vector<int> timeline_vec;
+			for (int d = 0; d <= m_Epidemic.days; d++)
+				timeline_vec.push_back(d);
+
+			int* timeline = &timeline_vec[0];
+
+			ImPlot::PlotLine(key.c_str(), timeline, data, 300);
 		}
-
-		//ImPlot::PlotLine("label", arr, arr, 3);
-
 		ImPlot::EndPlot();
 	}
 }

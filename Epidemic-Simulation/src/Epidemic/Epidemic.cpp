@@ -19,6 +19,14 @@ Epidemic::Epidemic(
 	fatality(fatality), immunity(immunity), medIntroduced(medIntroduced), qIntroduced(qIntroduced),
 	medEffectiveness(medEffectiveness), qEffectiveness(qEffectiveness)
 {
+	stats = {
+		{"infections", {}},
+		{"deaths", {}},
+		{"recovered", {}},
+		{"medicated", {}},
+		{"quarantined", {}},
+	};
+
 	// Run();
 }
 
@@ -31,9 +39,19 @@ Epidemic::~Epidemic()
 
 void Epidemic::Generate()
 {
+	clear = true;
 	m_Cells.clear();
 	m_InitialInfected.clear();
 
+	// Stats
+	for (auto& [key, vec] : stats)
+	{
+		vec.clear();
+		for (int _ = 0; _ < days; _++)
+			vec.push_back(0);
+	}
+
+	// Map
 	for (int r = 0; r < size; r++)
 	{
 		std::vector<Cell> row;
@@ -50,6 +68,15 @@ void Epidemic::Generate()
 void Epidemic::Reset()
 {
 	t = 0;
+	clear = true;
+
+	// Stats
+	for (auto& [key, vec] : stats)
+	{
+		vec.clear();
+		for (int _ = 0; _ < days; _++)
+			vec.push_back(0);
+	}
 
 	for (auto& row : m_Cells)
 	{
@@ -62,7 +89,7 @@ void Epidemic::Reset()
 
 			cell.Reset();
 			if (initialInfected)
-				cell.Infect(incubation, duration, infections);
+				cell.Infect(incubation, duration, stats, t);
 		}
 	}
 }
@@ -70,8 +97,11 @@ void Epidemic::Reset()
 
 void Epidemic::InitialInfect(sf::Vector2u position)
 {
+	if (m_Cells[position.y][position.x].empty || m_Cells[position.y][position.x].infected || !clear)
+		return;
+
 	m_InitialInfected.push_back(position);
-	m_Cells[position.y][position.x].Infect(incubation, duration, infections);
+	m_Cells[position.y][position.x].Infect(incubation, duration, stats, t);
 }
 
 
@@ -83,11 +113,13 @@ void Epidemic::Step()
 	if (!running)
 		return;
 	
+	clear = false;
+
 	for (auto& row : m_Cells)
 	{
 		for (Cell& cell : row)
 		{
-			cell.Update(fatality, immunity, deaths, recovered);
+			cell.Update(fatality, immunity, stats, t);
 
 			if (!cell.infected || cell.incubation > 0)
 				continue;
@@ -95,17 +127,16 @@ void Epidemic::Step()
 			// Medicate
 			if (!cell.medicated && t > medIntroduced)
 			{
-				if (cell.Medicate(medEffectiveness, medicated))
+				if (cell.Medicate(medEffectiveness, stats, t))
 				{
-					recovered++;
-					cell.Recover(immunity, recovered);
+					cell.Recover(immunity, stats, t);
 					continue;
 				}
 			}
 
 			// Quarantine
 			if (!cell.quarantined && t > qIntroduced)
-				if (cell.Quarantine(qEffectiveness, quarantined))
+				if (cell.Quarantine(qEffectiveness, stats, t))
 					continue;
 
 			// Infect neighbors
@@ -128,7 +159,7 @@ void Epidemic::Step()
 
 				if (Random::Rand() > neighbor.immunity && Random::Rand() < rate)
 				{
-					neighbor.Infect(incubation, duration, infections);
+					neighbor.Infect(incubation, duration, stats, t);
 				}
 			}
 		}
