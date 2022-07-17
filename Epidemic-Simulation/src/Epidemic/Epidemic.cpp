@@ -155,7 +155,7 @@ void Epidemic::Step()
 
 			for (Cell& neighbor : neighbors)
 			{
-				if (neighbor.infected || neighbor.empty)
+				if (neighbor.infected || neighbor.empty || neighbor.dead)
 					continue;
 
 				if (Random::Rand() > neighbor.immunity && Random::Rand() < rate)
