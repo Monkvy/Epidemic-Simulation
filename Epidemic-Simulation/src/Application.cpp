@@ -7,7 +7,7 @@
 
 
 Application::Application()
-	: BaseWindow("Epidemic-Simulation", 1000, 1000), m_Epidemic(
+	: BaseWindow("Epidemic-Simulation", 1000, 1000, 60), m_Epidemic(
 		50, 0.7f, 300, 0.3f, 3, 4, 0.02f, 0.3f, 400, 0.0f, 400, 0.0f
 	), m_ConfigRect{0.f, 0.f, 300.f, 1000.f}
 {

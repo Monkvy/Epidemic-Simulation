@@ -9,6 +9,7 @@ public:
 	BaseWindow(const std::string& title, uint16_t width, uint16_t height, uint16_t maxFps = 144);
 	~BaseWindow();
 
+	inline virtual float getFps() final { return m_Fps; }
 	virtual void Run(sf::Color fillColor = sf::Color::Black) final;
 
 protected:
