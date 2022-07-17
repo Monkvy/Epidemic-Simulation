@@ -23,7 +23,7 @@ Application::Application()
 
 void Application::HandleEvents(sf::Event event)
 {
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && !m_GuiHovered)
+	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && !m_GuiHovered && !m_ShowPlot)
 	{
 		sf::Vector2i mousePos = sf::Mouse::getPosition(p_Window);
 		size_t size = m_Epidemic.getCurrentSize();
@@ -114,31 +114,10 @@ void Application::Render()
 	ImGui::End();
 
 
-
-
-	/*
-	ImPlot::BeginPlot("hi");
-
-	int x[10] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-	};
-
-	int y[10] = {
-		0, 2, 1, 3, 4, 2, 4, 3, 3, 1
-	};
-
-	ImPlot::PlotLine("test", x, y, 10);
-
-	ImPlot::EndPlot();
-	*/
-
-
-
-
 	// Plot
 	if (m_ShowPlot && m_Epidemic.stats["infections"].size() == m_Epidemic.days)
 	{
-		ImPlot::BeginPlot("hi");
+		ImPlot::BeginPlot("Graph");
 		
 		for (auto& [key, vec] : m_Epidemic.stats)
 		{
