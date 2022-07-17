@@ -39,6 +39,7 @@ Epidemic::~Epidemic()
 
 void Epidemic::Generate()
 {
+	t = 0;
 	clear = true;
 	m_Cells.clear();
 	m_InitialInfected.clear();

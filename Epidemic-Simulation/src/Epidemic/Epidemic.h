@@ -47,11 +47,11 @@ public:
 	std::map<std::string, std::vector<int>> stats;
 	int* timeline;
 
-	int infections = 0;
-	int deaths = 0;
-	int recovered = 0; 
-	int medicated = 0;
-	int quarantined = 0;
+	std::vector<int> infections;
+	std::vector<int> deaths;
+	std::vector<int> recovered;
+	std::vector<int> medicated;
+	std::vector<int> quarantined;
 
 private:
 	std::vector<std::vector<Cell>> m_Cells;
