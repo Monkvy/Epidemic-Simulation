@@ -1,2 +1,5 @@
 # Epidemic-Simulation
- A virus simulation
+A virus simulation
+
+Documentation coming soon...
+
