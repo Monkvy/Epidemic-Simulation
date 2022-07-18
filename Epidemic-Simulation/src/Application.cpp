@@ -101,7 +101,7 @@ void Application::Render()
 	ImGui::SliderInt("Days", &m_Epidemic.days, 1, 365 * 4);
 	ImGui::SliderFloat("Rate", &m_Epidemic.rate, 0.f, 1.f);
 	ImGui::SliderInt("Incubation", &m_Epidemic.incubation, 0, 120);
-	ImGui::SliderInt("Duration", &m_Epidemic.days, 1, 120);
+	ImGui::SliderInt("Duration", &m_Epidemic.duration, 1, 120);
 	ImGui::SliderFloat("Fatality", &m_Epidemic.fatality, 0.f, 1.f);
 	ImGui::SliderFloat("Immunity", &m_Epidemic.immunity, 0.f, 1.f);
 	ImGui::SliderInt("Medicine at day", &m_Epidemic.medIntroduced, 0, m_Epidemic.days + 1);
