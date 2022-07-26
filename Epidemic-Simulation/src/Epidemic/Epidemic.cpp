@@ -1,4 +1,5 @@
 #include "Epidemic.h"
+#include <functional>
 #include "Random.h"
 
 
@@ -153,8 +154,9 @@ void Epidemic::Step()
 			if ((int)cell.position.y < size - 1)
 				neighbors.push_back(std::ref(m_Cells[cell.position.y + 1][cell.position.x]));	// Under
 
-			for (Cell& neighbor : neighbors)
+			for (auto neighbor_ref : neighbors)
 			{
+				Cell& neighbor = neighbor_ref.get();
 				if (neighbor.infected || neighbor.empty || neighbor.dead)
 					continue;
 
